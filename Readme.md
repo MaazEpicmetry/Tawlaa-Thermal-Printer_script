@@ -50,7 +50,7 @@ const CHANNEL = "orders-<branch_id>";
 ```
 💡 Tip: the batch setup script auto-replaces <branch_id> with user input.
 
-3️⃣ Create Scheduled Task (Auto-start)
+### 3️⃣ Create Scheduled Task (Auto-start)
 
 Run the setup batch file:
 
@@ -68,7 +68,7 @@ This will:
 
  - Ensure the script restarts automatically if it crashes
 
-4️⃣ Logs & Monitoring
+### 4️⃣ Logs & Monitoring
 
 Logs are saved daily under the /logs folder, e.g.:
 
@@ -83,7 +83,7 @@ Each log includes:
 
  - System restarts and errors
 
-⚙️ Key Settings (in task-template.xml)
+### ⚙️ Key Settings (in task-template.xml)
 
  - Runs with highest privileges
 
@@ -93,7 +93,7 @@ Each log includes:
 
  - Stops previous instances before launching new ones
 
-🧠 Troubleshooting
+### 🧠 Troubleshooting
 
  | Issue                    | Cause                        | Fix                                          |
 | ------------------------ | ---------------------------- | -------------------------------------------- |
@@ -103,7 +103,7 @@ Each log includes:
 | Script exits early       | Node path incorrect          | Update `NODE_PATH` in setup.bat              |
 
 
-👨‍💻 Developer Notes
+### 👨‍💻 Developer Notes
 
 - Built in Node.js v16
 
@@ -113,7 +113,7 @@ Each log includes:
 
  - Includes self-healing and scheduled refresh via setInterval.
 
-💡 Future Enhancements
+### 💡 Future Enhancements
 
 🧠 GUI Dashboard (Electron) for live monitoring
 
