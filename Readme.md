@@ -47,14 +47,16 @@ thermal-printer-script/
 Inside `thermal-printer.js`, set your Redis credentials and desired channel:
 ```js
 const CHANNEL = "orders-<branch_id>";
+```
 💡 Tip: the batch setup script auto-replaces <branch_id> with user input.
 
 3️⃣ Create Scheduled Task (Auto-start)
 
 Run the setup batch file:
 
+```bash
 setup.bat
-
+```
 
 This will:
 
