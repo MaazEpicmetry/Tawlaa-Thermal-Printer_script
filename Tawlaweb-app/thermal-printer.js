@@ -166,6 +166,7 @@ async function startSystem() {
   server.on("error", (err) => {
     if (err.code === "EADDRINUSE") {
       log(`Port 3005 already in use. Retrying in 3 seconds...`, "⚠️");
+      setTimeout(killPreviousInstance, 1000);
       setTimeout(startSystem, 3000);
     } else {
       log(" Server error: " + err, "🚨");
