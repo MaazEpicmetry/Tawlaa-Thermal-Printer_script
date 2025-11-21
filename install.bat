@@ -39,9 +39,9 @@ for /f "delims=" %%a in ('whoami') do set "CURRENT_USER=%%a"
 echo 🧠 Preparing task XML...
 powershell -Command ^
     "(Get-Content '%BASE_DIR%task-template.xml') -replace '__CURRENT_USER__', '%CURRENT_USER%' |" ^
-    "ForEach-Object {$_ -replace 'C:\\\\laragon\\\\www\\\\node-v16\\\\node.exe', '%NODE_PATH:'=\'%'} |" ^
-    "ForEach-Object {$_ -replace 'C:\\\\laragon\\\\www\\\\Tawlaweb-app\\\\thermal-printer.js', '%SCRIPT_PATH:'=\'%'} |" ^
-    "ForEach-Object {$_ -replace 'C:\\\\laragon\\\\www\\\\Tawlaweb-app', '%WORK_DIR:'=\'%'} |" ^
+    "ForEach-Object {$_ -replace 'C:\\\\thermal-printer-script\\\\node-v16\\\\node.exe', '%NODE_PATH:'=\'%'} |" ^
+    "ForEach-Object {$_ -replace 'C:\\\\thermal-printer-script\\\\Tawlaweb-app\\\\thermal-printer.js', '%SCRIPT_PATH:'=\'%'} |" ^
+    "ForEach-Object {$_ -replace 'C:\\\\thermal-printer-script\\\\Tawlaweb-app', '%WORK_DIR:'=\'%'} |" ^
     "Out-File '%TEMP_XML%' -Encoding Unicode"
 
 :: Delete old task if it exists
