@@ -59,78 +59,49 @@ function log(msg, icon = "ℹ️") {
 }
 
 function killPreviousInstance() {
-  try { 
+  try {
     log("[check 1] Checking for existing instances...", "🔍");
 
-    const tasks = execSync(`wmic process where "name='node.exe'" get ProcessId,CommandLine`, { encoding: "utf8" });
-
-    const lines = tasks.split("\n").filter(line => line.includes("thermal.js"));
-    if (lines.length > 0) {
-      for (const line of lines) {
-        const match = line.match(/(\d+)\s*$/); // extract PID at end of line
-        if (match) {
-          const pid = match[1];
-          log(`Found old instance with PID ${pid}. Killing... 💀`);
-          try {
-            process.kill(pid, "SIGTERM");
-          } catch {
-            exec(`taskkill /PID ${pid} /F`);
-          }
-          log(`Killed previous instance PID ${pid}`, "✅");
-        }
-      }
-    } else {
-      log("No previous instances found.", "✨");
-    }
-  } catch (err) {
-    log(`Error checking/killing previous instances: ${err.message}`, "❌");
-  }
-
-  try {
-    log("[check 2] Checking for existing instances...", "🔍");
     const scriptName = path.basename(__filename).toLowerCase();
     const currentPid = process.pid;
 
-    // Grab every node.exe with its command line
-    const output = execSync(`wmic process where "name='node.exe'" get ProcessId,CommandLine /VALUE`, {
-      stdio: ["pipe", "pipe", "ignore"],
-      encoding: "utf8"
-    });
+    const output = execSync(
+      `powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \\"name='node.exe'\\" | Select-Object ProcessId, CommandLine | ConvertTo-Json"`,
+      { encoding: "utf8" }
+    );
 
-    const processes = output
-      .split(/\n\n+/)
-      .map(block => {
-        const cmdMatch = block.match(/CommandLine=(.*)/i);
-        const pidMatch = block.match(/ProcessId=(\d+)/i);
-        if (!cmdMatch || !pidMatch) return null;
-
-        return {
-          pid: parseInt(pidMatch[1]),
-          cmd: cmdMatch[1].toLowerCase()
-        };
-      })
-      .filter(Boolean);
+    let processes = [];
+    try {
+      const parsed = JSON.parse(output);
+      processes = Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+      log("No node.exe processes found or failed to parse output.", "✨");
+      return;
+    }
 
     const duplicates = processes.filter(
       p =>
-        p.pid !== currentPid &&
-        (p.cmd.includes(scriptName) || p.cmd.includes(__dirname.toLowerCase()))
+        p.ProcessId !== currentPid &&
+        p.CommandLine &&
+        (p.CommandLine.toLowerCase().includes(scriptName) ||
+          p.CommandLine.toLowerCase().includes(__dirname.toLowerCase()))
     );
 
     if (duplicates.length === 0) {
-      log("No other instances found.", "✅");
+      log("No previous instances found.", "✨");
     } else {
       for (const proc of duplicates) {
-        log(`Killing old instance with PID ${proc.pid}`, "🧹");
+        log(`Found old instance with PID ${proc.ProcessId}. Killing...`, "💀");
         try {
-          execSync(`taskkill /PID ${proc.pid} /F`);
+          execSync(`taskkill /PID ${proc.ProcessId} /F`);
+          log(`Killed previous instance PID ${proc.ProcessId}`, "✅");
         } catch (killErr) {
-          log(`Failed to kill PID ${proc.pid}: ${killErr.message}`, "⚠️");
+          log(`Failed to kill PID ${proc.ProcessId}: ${killErr.message}`, "⚠️");
         }
       }
     }
   } catch (err) {
-    log(`Error checking/killing old instance: ${err.message}`, "⚠️");
+    log(`Error checking/killing previous instances: ${err.message}`, "❌");
   }
 }
 
