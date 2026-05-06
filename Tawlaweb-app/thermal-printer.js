@@ -146,7 +146,7 @@ async function startSystem() {
 
   // --- REDIS SETUP ---
   subscriber = new Redis({
-    host: "3.29.68.97",
+    host: "13.215.174.8",
     port: 6379,
     password: "TawlaRedis@0101",
     connectTimeout: 5000,
